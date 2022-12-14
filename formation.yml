@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MediaWiki EC2 IAM policies
+Parameters:
+  SourceBucketName:
+    Type: String
+    Description: Source bucket name
+Resources:
+  AccessSourceBucketPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Access to MediaWiki source bucket
+      Path: /
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+              - s3:GetObject
+              - s3:GetObjectAcl
+              - s3:GetObjectTagging
+            Resource:
+              - !Sub "arn:aws:s3:::${SourceBucketName}"
+              - !Sub "arn:aws:s3:::${SourceBucketName}/*"
+  PutMetricsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Put EC2 metrics
+      Path: /
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - cloudwatch:PutMetricData
+              - ec2:DescribeTags
+              - cloudwatch:GetMetricStatistics
+              - cloudwatch:ListMetrics
+            Resource: '*'
